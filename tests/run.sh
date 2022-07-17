@@ -8,7 +8,7 @@ clang tests/foo.m -c -o tests/foo.o
 clang tests/empty_main.c -c -o tests/empty_main.o
 
 ld \
-  -arch "$(arch)" \
+  -arch "$(uname -m)" \
   -framework Foundation \
   -lfoo -Ltests \
   -lSystem \
@@ -24,7 +24,7 @@ fi
 
 clang tests/main_with_macro.m -c -o tests/main_with_macro.o -I .
 ld \
-  -arch "$(arch)" \
+  -arch "$(uname -m)" \
   -framework Foundation \
   -lfoo -Ltests \
   -lSystem \
@@ -48,7 +48,7 @@ fi
 
 clang tests/main_with_macro.m -c -o tests/main_with_macro.o -I .
 ld \
-  -arch "$(arch)" \
+  -arch "$(uname -m)" \
   -framework Foundation \
   -lfoo -Ltests \
   -lSystem \

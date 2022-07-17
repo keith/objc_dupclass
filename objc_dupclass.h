@@ -1,3 +1,10 @@
+// TODO: This isn't entirely accurate, but I'm not sure how to more accurately determine
+#if defined(__arm64__)
+#define SECTION "__DATA_CONST"
+#else
+#define SECTION "__DATA"
+#endif
+
 #define OBJC_DUPCLASS(kclass) \
     __attribute__((visibility("hidden"))) \
       void __deadstripped_shim__##kclass() { (void)[kclass class]; } \
@@ -7,5 +14,5 @@
       const __duplicate_class_##kclass = { 0, 0, #kclass }; \
     \
     __attribute__((used)) __attribute__((visibility("hidden"))) \
-      __attribute__((section ("__DATA_CONST,__objc_dupclass"))) \
+      __attribute__((section (SECTION",__objc_dupclass"))) \
       const void* __set___objc_dupclass_sym___duplicate_class_##kclass = &__duplicate_class_##kclass;

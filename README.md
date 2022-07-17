@@ -14,23 +14,11 @@ repo provides a C macro for adding classes to this special location.
 
 ## Usage
 
-For your own code, to silence the warning for the `Foo` class:
-
-```objc
-#import "objc_dupclass.h"
-
-@interface Foo : NSObject
-@end
-
-// ...
-
-OBJC_DUPCLASS(Foo);
-```
-
-For Apple's code, to silence the warning for classes you don't own:
+Call the macro in any Objective-C / C / C++ file in your project,
+passing the class you want to silence the warning for:
 
 ```c
 #include "objc_dupclass.h"
 
-OBJC_DUPCLASS_FROM_STRING(AMSupportURLConnectionDelegate);
+OBJC_DUPCLASS(AMSupportURLConnectionDelegate);
 ```

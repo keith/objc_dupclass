@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -euo pipefail
-set -x
 
 clang tests/foo.m -o tests/libfoo.dylib -dynamiclib -framework Foundation
 clang tests/foo.m -c -o tests/foo.o

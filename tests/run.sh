@@ -46,6 +46,22 @@ if clang tests/main_with_invalid_class.m -c -o /dev/null -I . 2>/dev/null; then
   exit 1
 fi
 
+clang tests/main_with_string_macro.c -c -o tests/main_with_string_macro.o -I .
+ld \
+  -arch "$(uname -m)" \
+  -framework Foundation \
+  -lfoo -Ltests \
+  -lSystem \
+  -syslibroot "$(xcrun --show-sdk-path)" \
+  tests/main_with_string_macro.o tests/foo.o \
+  -o tests/nowarningfromstring.bin
+
+output=$(./tests/nowarningfromstring.bin 2>&1)
+if [[ "$output" == *"Class Foo is implemented in both"* ]]; then
+  echo "error: had unexpected duplicate class warning: $output" >&2
+  exit 1
+fi
+
 clang tests/main_with_macro.m -c -o tests/main_with_macro.o -I .
 ld \
   -arch "$(uname -m)" \
@@ -54,4 +70,27 @@ ld \
   -lSystem \
   -syslibroot "$(xcrun --show-sdk-path)" \
   tests/main_with_macro.o tests/foo.o \
-  -o tests/nowarning.bin
+  -o tests/nodeadstrip.bin
+
+output=$(nm -U tests/nodeadstrip.bin)
+if [[ "$output" != *__deadstripped_shim* ]]; then
+  echo "error: expected dead strip symbol without the argument" >&2
+  exit 1
+fi
+
+clang tests/main_with_macro.m -c -o tests/main_with_macro.o -I .
+ld \
+  -arch "$(uname -m)" \
+  -dead_strip \
+  -framework Foundation \
+  -lfoo -Ltests \
+  -lSystem \
+  -syslibroot "$(xcrun --show-sdk-path)" \
+  tests/main_with_macro.o tests/foo.o \
+  -o tests/withdeadstrip.bin
+
+output=$(nm -U tests/withdeadstrip.bin)
+if [[ "$output" == *__deadstripped_shim* ]]; then
+  echo "error: unexpected dead strip symbol with the argument" >&2
+  exit 1
+fi

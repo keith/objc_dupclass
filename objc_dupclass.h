@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 // TODO: This isn't entirely accurate, but I'm not sure how to more accurately determine
-#if defined(__arm64__)
+#if (defined(__arm64__) || defined(DUPCLASS_FORCE_DATA_CONST)) && !defined(DUPCLASS_FORCE_DATA)
 #define SECTION "__DATA_CONST"
 #else
 #define SECTION "__DATA"

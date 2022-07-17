@@ -93,3 +93,17 @@ if [[ "$output" == *__deadstripped_shim* ]]; then
   echo "error: unexpected dead strip symbol with the argument" >&2
   exit 1
 fi
+
+clang tests/main_with_macro.m -c -o tests/force_const.o -I . -arch x86_64 -DDUPCLASS_FORCE_DATA_CONST
+output=$(size -m tests/force_const.o)
+if [[ "$output" != *"__DATA_CONST, __objc_dupclass"* ]]; then
+  echo "error: missing __DATA_CONST version" >&2
+  exit 1
+fi
+
+clang tests/main_with_macro.m -c -o tests/force_data.o -I . -arch arm64 -DDUPCLASS_FORCE_DATA
+output=$(size -m tests/force_data.o)
+if [[ "$output" != *"__DATA, __objc_dupclass"* ]]; then
+  echo "error: missing __DATA version" >&2
+  exit 1
+fi
